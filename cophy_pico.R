@@ -1,125 +1,181 @@
 rm(list = ls())
 library(phytools)
 library(ape) 
+library(paco)
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("ggtree")
+# library("Biostrings")
+library("ggplot2")
+library("ggtree")
+library(ggrepel)
 
-tree1<-read.newick("Picobirnavirus complete.newick")
-tree2<-read.newick("Picobirnavirus short.newick")
+## final trees
 
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
+treeA<-read.newick("Pico A.nwk")
+treeB<-read.newick("Pico B.nwk")
+treeC<-read.newick("Pico C.nwk")
+treeD<-read.newick("Pico D.nwk")
+treeE<-read.newick("Pico E.nwk")
 
-tree1$tip.label<-LETTERS[1:length(tree1$tip.label)]
-tree2$tip.label<-LETTERS[tt]
+treeE$tip.label<-sub("_.*", "", treeE$tip.label)
+treeE$tip.label[91:95]<-'Picobirnavirus 2'
+treeE$tip.label[96:length(treeE$tip.label)]<-'Picobirnavirus 1'
 
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
-
-pdf("cophy_pico.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
-dev.off()
-
-tree1<-read.newick("ML tree of NaturePico.newick")
-tree2<-read.newick("ML tree of NaturePicoTrimmed.newick")
-
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
-
-tree1$tip.label<-LETTERS[1:length(tree1$tip.label)]
-tree2$tip.label<-LETTERS[tt]
-
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
-
-pdf("cophy_pico_nature_trimmed.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
-dev.off()
-
+treeE$node.label<-1:length(treeE$node.label)
 ##
 
-tree1<-read.newick("ML tree of NucleotideAlignmentTrimmedSHORT.newick")
-tree2<-read.newick("ML tree of NucleotideAlignmentTrimmed.newick")
+## to find tips and nodes
+ggtree(treeE) + geom_text2(aes(subset=!isTip, label=node), hjust=-.3) + geom_tiplab()
 
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
+gzoom(treeE, grep("Picobirnavirus", treeE$tip.label)) 
 
-x<-tree1$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree1$tip.label<-x1
+## 
+groupInfo <- split(treeE$tip.label, gsub("_\\w+", "", treeE$tip.label))
+treeE <- groupOTU(treeE, groupInfo)
 
-x<-tree2$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree2$tip.label<-x1
+ggtree(treeE, layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +# geom_tree()+
+  ggtitle("dsRNA phlylogeny")+
+  geom_tiplab(aes(color=group),size = 2)+
+  scale_x_continuous(expand = c(0,0), limits = c(0,8))
 
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
 
-pdf("cophy_pico_NA_TrimAI.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
+# # #These are the tips to drop
+ prunetips <- c(1:8,10:11,13:16,25:31,38:68,70:89,91:length(treeE$tip.label)) # to just drop those that are not picob
+ treeE$tip.label[prunetips]<-'' # to just drop those that are not picob
+# # 
+# # #But get the tips to keep
+#  keeptips <- treeE$tip.label[!treeE$tip.label %in% prunetips]
+# # 
+# # #Group the tips to keep
+#  prunetree <- groupOTU(treeE, focus=keeptips)
+# # 
+# # #And plot
+#  ggtree(prunetree, aes()) + drop.tip(prunetips)
+#  # ggtree(prunetree, aes(color=group))+
+# #   scale_color_manual(values=c("lightgrey","black"))+
+# #   geom_tiplab()
+
+ # ggtree(treeE, aes())+ ggtitle("dsRNA phlylogeny")+theme_tree2() +
+ #   #geom_tiplab()+ 
+ #   geom_cladelabel(node=199, label="test label", align=T, color='red') 
+
+ # treeE <- groupOTU(treeE, focus=c("Picobirnavirus 1", "Picobirnavirus 2"))
+ # ggtree(treeE)+ ggtitle("dsRNA phlylogeny")+theme_tree2() +
+#   geom_tiplab(size=2.5, aes(color=group))+ geom_tippoint(aes(color=group))#
+# #theme(legend.position="left")
+# 
+ p<-ggtree(treeE, aes(color=group), layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) 
+ g <- ggplot_build(p)
+
+ggtree(treeE, aes(color=group), layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +
+   ggtitle("dsRNA phlylogeny")+
+   geom_hilight(node=218, fill="gold",alpha = .1)+ 
+   geom_cladelabel(node=219, label="Picobirnavirus 2", #align=T,
+                   color='black',fontsize = 3)+ 
+   geom_cladelabel(node=223, label="Picobirnavirus 1", #align=T,
+                   color='black',fontsize = 3)+
+   geom_tiplab(size = 3) + 
+  #theme(legend.position="left")+
+  # guides(colour = guide_legend(override.aes = list(size=3,linetype=0),title = 'Virus'))+
+    geom_point(aes(colour = group), size = 0) +
+   geom_cladelabel(node=131, label="Chrysovirus", #align=T,
+                   color=(g$data[[1]]$colour[131]),fontsize = 2)+ 
+   geom_cladelabel(node=138, label="Chrysovirus", #align=T,
+                   color=(g$data[[1]]$colour[138]),fontsize = 2)+ 
+   geom_cladelabel(node=142, label="Totivirus", #align=T,
+                   color=(g$data[[1]]$colour[142]),fontsize = 2)+ 
+   geom_cladelabel(node=153, label="Victorivirus", #align=T,
+                   color=(g$data[[1]]$colour[153]),fontsize = 2)+ 
+   geom_cladelabel(node=167, label="Aquabirnavirus", #align=T,
+                   color=(g$data[[1]]$colour[167]),fontsize = 2)+ 
+   geom_cladelabel(node=176, label="Avibirnavirus", #align=T,
+                   color=(g$data[[1]]$colour[176]),fontsize = 2)+ 
+   geom_cladelabel(node=187, label="Orbivirus", #align=T,
+                   color=(g$data[[1]]$colour[187]),fontsize = 2)+ 
+   geom_cladelabel(node=199, label="Orthoreovirus", #align=T,
+                   color=(g$data[[1]]$colour[199]),fontsize = 2)+ 
+   geom_cladelabel(node=208, label="Rotavirus", #align=T,
+                   color=(g$data[[1]]$colour[208]),fontsize = 2)+
+   scale_x_continuous(expand = c(0,0), limits = c(0,8))
+  
+##
+
+ggtree(treeE, layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +
+  ggtitle("dsRNA phlylogeny")+
+  geom_hilight(node=218, fill="gold",alpha = .1)+ 
+  geom_cladelabel(node=219, label="Picobirnavirus 2", #align=T,
+                  color='black',fontsize = 3)+ 
+  geom_cladelabel(node=223, label="Picobirnavirus 1", #align=T,
+                  color='black',fontsize = 3)+
+  geom_tiplab(aes(color = group),size = 2) + 
+  #theme(legend.position="left")+
+  # guides(colour = guide_legend(override.aes = list(size=3,linetype=0),title = 'Virus'))+
+ # geom_point(aes(colour = group), size = 0) +
+  geom_cladelabel(node=131, label="Chrysovirus", #align=T,
+                  color=(g$data[[1]]$colour[131]),fontsize = 2)+ 
+  geom_cladelabel(node=138, label="Chrysovirus", #align=T,
+                  color=(g$data[[1]]$colour[138]),fontsize = 2)+ 
+  geom_cladelabel(node=142, label="Totivirus", #align=T,
+                  color=(g$data[[1]]$colour[142]),fontsize = 2)+ 
+  geom_cladelabel(node=153, label="Victorivirus", #align=T,
+                  color=(g$data[[1]]$colour[153]),fontsize = 2)+ 
+  geom_cladelabel(node=167, label="Aquabirnavirus", #align=T,
+                  color=(g$data[[1]]$colour[167]),fontsize = 2)+ 
+  geom_cladelabel(node=176, label="Avibirnavirus", #align=T,
+                  color=(g$data[[1]]$colour[176]),fontsize = 2)+ 
+  geom_cladelabel(node=187, label="Orbivirus", #align=T,
+                  color=(g$data[[1]]$colour[187]),fontsize = 2)+ 
+  geom_cladelabel(node=199, label="Orthoreovirus", #align=T,
+                  color=(g$data[[1]]$colour[199]),fontsize = 2)+ 
+  geom_cladelabel(node=208, label="Rotavirus", #align=T,
+                  color=(g$data[[1]]$colour[208]),fontsize = 2)+
+  scale_x_continuous(expand = c(0,0), limits = c(0,8))
+
+# change labels
+
+library(stringr)
+str_sub(treeA$tip.label,1,2)
+
+treeA$tip.label<-str_sub(treeA$tip.label,1,2)
+treeB$tip.label<-str_sub(treeB$tip.label,1,2)
+treeC$tip.label<-str_sub(treeC$tip.label,1,2)
+treeD$tip.label<-str_sub(treeD$tip.label,1,2)
+#treeE$tip.label<-str_sub(treeE$tip.label,1,2)
+
+# paco
+mat_co<-diag(x = 1, nrow=length(treeA$tip.label), ncol=length(treeA$tip.label))
+row.names(mat_co)<-(treeA$tip.label)
+colnames(mat_co)<-(treeA$tip.label)
+treeAt<-cophenetic(treeA)
+treeBt<-cophenetic(treeB)
+D<-prepare_paco_data(H=treeAt,P=treeBt,HP=mat_co)
+D<-add_pcoord(D, correction = 'cailliez')
+D<-PACo(D,nperm=1000,seed=12,method = 'r0',symmetric = T)
+D<-paco_links(D)
+res<-residuals_paco(D$proc)
+assoc <- data.frame(pol=rownames(mat_co)[which(mat_co==1, arr.ind=TRUE)[,'row']], 
+                    pla=colnames(mat_co)[which(mat_co==1, arr.ind=TRUE)[,'col']])
+weight <- (res^-2)/50
+
+cophyloplot(treeA, treeB, assoc, show.tip.label=T, use.edge.length=FALSE,
+            lwd=weight, col='steelblue', length.line=0, gap=5, space=5)
+
+#
+
+objAB<-cophylo(treeA,treeB,rotate = T)
+plot(objAB,cex=0.01,show.tip.label=F)
+objAC<-cophylo(treeA,treeC,rotate = T)
+plot(objAC,cex=0.01)
+objDC<-cophylo(treeD,treeC,rotate = T)
+plot(objDC,cex=0.01)
+
+# plot together
+
+pdf('combined_trees.pdf',width=20)
+par(mfrow=c(1,3))
+plot(objAB,fsize=0.8)
+plot(objAC,fsize=0.8)
+plot(objDC,fsize=0.8)
 dev.off()
-
-#### protein
-
-tree1<-read.newick("ML tree of ProteinAlignmentTrimmedSHORT.newick")
-tree2<-read.newick("ML tree of ProteinAlignmentTrimmed.newick")
-
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
-
-x<-tree1$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree1$tip.label<-x1
-
-x<-tree2$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree2$tip.label<-x1
-
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
-
-pdf("cophy_pico_Prot_TrimAI.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
-dev.off()
-
-#### trimmed
-
-tree1<-read.newick("ML tree of ProteinAlignmentTrimmedSHORT.newick")
-tree2<-read.newick("ML tree of NucleotideAlignmentTrimmedSHORT.newick")
-
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
-
-x<-tree1$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree1$tip.label<-x1
-
-x<-tree2$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree2$tip.label<-x1
-
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
-
-pdf("cophy_pico_TRIMMED_SHORT_TrimAI.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
-dev.off()
-
-tree1<-read.newick("ML tree of ProteinAlignmentTrimmed.newick")
-tree2<-read.newick("ML tree of NucleotideAlignmentTrimmed.newick")
-
-tt<-charmatch(tree1$tip.label,tree2$tip.label)
-
-x<-tree1$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree1$tip.label<-x1
-
-x<-tree2$tip.label
-x1 = sapply(strsplit(x, split='_', fixed=TRUE),function(x) (x[1]))
-tree2$tip.label<-x1
-
-obj<-cophylo(tree1,tree2,rotate = F)
-plot(obj,cex=0.01)
-
-pdf("cophy_pico_TRIMMED_TrimAI.pdf",width = 7,height = 7)
-obj<-cophylo(tree1,tree2,rotate = T)
-plot(obj,cex=0.01)
-dev.off()
+# cophyloplot(treeA, treeB, assoc, show.tip.label=T, use.edge.length=FALSE,
+#             lwd=weight, col='steelblue', length.line=0, gap=15, space=5)
