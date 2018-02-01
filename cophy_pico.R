@@ -107,28 +107,30 @@ ggtree(treeE, layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +
                   color='black',fontsize = 3)+ 
   geom_cladelabel(node=223, label="Picobirnavirus 1", #align=T,
                   color='black',fontsize = 3)+
-  geom_tiplab(aes(color = group),size = 2) + 
-  #theme(legend.position="left")+
-  # guides(colour = guide_legend(override.aes = list(size=3,linetype=0),title = 'Virus'))+
- # geom_point(aes(colour = group), size = 0) +
+  geom_tiplab(aes(color = group),size = 3) + 
+## comment out the next 3 lines to remove the labels
+  #  theme(legend.position="left")+
+  #  guides(colour = guide_legend(override.aes = list(size=3,linetype=0),title = 'Virus'))+
+  # geom_point(aes(colour = group), size = 0) +
   geom_cladelabel(node=131, label="Chrysovirus", #align=T,
-                  color=(g$data[[1]]$colour[131]),fontsize = 2)+ 
+                  # nb change all font sizes to 2 if want smaller
+                  color=(g$data[[1]]$colour[131]),fontsize = 3)+ 
   geom_cladelabel(node=138, label="Chrysovirus", #align=T,
-                  color=(g$data[[1]]$colour[138]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[138]),fontsize = 3)+ 
   geom_cladelabel(node=142, label="Totivirus", #align=T,
-                  color=(g$data[[1]]$colour[142]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[142]),fontsize = 3)+ 
   geom_cladelabel(node=153, label="Victorivirus", #align=T,
-                  color=(g$data[[1]]$colour[153]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[153]),fontsize = 3)+ 
   geom_cladelabel(node=167, label="Aquabirnavirus", #align=T,
-                  color=(g$data[[1]]$colour[167]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[167]),fontsize = 3)+ 
   geom_cladelabel(node=176, label="Avibirnavirus", #align=T,
-                  color=(g$data[[1]]$colour[176]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[176]),fontsize = 3)+ 
   geom_cladelabel(node=187, label="Orbivirus", #align=T,
-                  color=(g$data[[1]]$colour[187]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[187]),fontsize = 3)+ 
   geom_cladelabel(node=199, label="Orthoreovirus", #align=T,
-                  color=(g$data[[1]]$colour[199]),fontsize = 2)+ 
+                  color=(g$data[[1]]$colour[199]),fontsize = 3)+ 
   geom_cladelabel(node=208, label="Rotavirus", #align=T,
-                  color=(g$data[[1]]$colour[208]),fontsize = 2)+
+                  color=(g$data[[1]]$colour[208]),fontsize = 3)+
   scale_x_continuous(expand = c(0,0), limits = c(0,8))
 
 # change labels
@@ -171,11 +173,15 @@ plot(objDC,cex=0.01)
 
 # plot together
 
-pdf('combined_trees.pdf',width=20)
-par(mfrow=c(1,3))
+pdf('combined_trees.pdf', height = 12, width = 8)
+par(mfrow=c(2,1))
 plot(objAB,fsize=0.8)
+text(-0.5, 1, "a",
+     cex = 1)
 plot(objAC,fsize=0.8)
-plot(objDC,fsize=0.8)
+text(-0.5, 1, "b",
+     cex = 1)
+#plot(objDC,fsize=0.8)
 dev.off()
 # cophyloplot(treeA, treeB, assoc, show.tip.label=T, use.edge.length=FALSE,
 #             lwd=weight, col='steelblue', length.line=0, gap=15, space=5)
