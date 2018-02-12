@@ -1,6 +1,7 @@
 library("ggplot2")
 data<-read.csv("SwissModelData.csv")
-data$Virus<-c(rep('Picobirnavirus',38),rep('dsRNA',17))
+#data$Virus<-c(rep('Picobirnavirus',38),rep('dsRNA',17))
+data$Virus<-c(rep('Picobirnavirus I',33),rep('Picobirnavirus II',5),rep('dsRNA',17))
 
 p <-ggplot(data, aes(NAME, QMEAN))
 p<-p +geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+
@@ -48,6 +49,7 @@ dev.off()
 
 ## same axis
 scaleFUN <- function(x) sprintf("%.2f", x)
+scaleFUNqmean <- function(x) sprintf("%.1f", x)
 
 
 p00 <-ggplot(data, aes(NAME, Seq_Similarity))
@@ -69,7 +71,7 @@ p100<-p100 +geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle 
 p200 <-ggplot(data, aes(NAME, QMEAN))
 p200<-p200 +geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+
   aes(x=reorder(NAME,Seq_Similarity),fill=Virus)+xlab('Virus')+ guides(fill=guide_legend(title="Classification"))+
-  scale_y_continuous(labels=scaleFUN)+ theme(legend.position = c(0.9, -1.1))
+  scale_y_continuous(labels=scaleFUNqmean)+ theme(legend.position = c(0.9, -1.1))
 
 library(gridExtra)
 
