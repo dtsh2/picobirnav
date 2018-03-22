@@ -1,0 +1,23 @@
+Virus Type,Accession,GMQE,QMEAN,Seq Similarity
+Aquabirnavirus,2YIA_A,0.99,-0.05,1
+Aquabirnavirus,AAV48846.1,0.97,-0.08,0.97
+Aquabirnavirus,AAV48841.1,0.97,-0.08,0.97
+Aquabirnavirus,ALF95249.1,0.92,-0.13,0.9
+Aquabirnavirus,ALF95253.1,0.92,-0.13,0.9
+Aquabirnavirus,2YIB_D,0.99,-0.15,1
+Aquabirnavirus,AAQ75362.1,0.92,-0.24,0.9
+Aquabirnavirus,ANY30126.1,0.91,-0.24,0.9
+Aquabirnavirus,AAN04570.1,0.96,-0.28,0.96
+Aquabirnavirus,AAM89503.1,0.96,-0.32,0.95
+Avibirnavirus,ACV66327.1,0.72,-2.38,0.48
+Avibirnavirus,AAN52493.1,0.72,-2.45,0.47
+Avibirnavirus,AFN80484.1,0.72,-2.48,0.47
+Avibirnavirus,ANY27962.1,0.72,-2.52,0.47
+Avibirnavirus,AAK69714.1,0.72,-2.54,0.48
+Avibirnavirus,CDP32876.1,0.72,-2.55,0.48
+Avibirnavirus,BAA23207.1,0.72,-2.61,0.47
+Avibirnavirus,ABG91143.1,0.72,-2.63,0.47
+Avibirnavirus,ABW04872.1,0.72,-2.68,0.48
+Avibirnavirus,AAB68518.1,0.71,-2.69,0.47
+Avibirnavirus,AKU89586.1,0.72,-2.7,0.48
+Entomobirnavirdae,AAL13168.2,0.5,-3.27,0.34
