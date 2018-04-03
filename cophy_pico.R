@@ -138,11 +138,11 @@ ggtree(treeE, layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +
 library(stringr)
 str_sub(treeA$tip.label,1,2)
 
-treeA$tip.label<-str_sub(treeA$tip.label,1,2)
-treeB$tip.label<-str_sub(treeB$tip.label,1,2)
-treeC$tip.label<-str_sub(treeC$tip.label,1,2)
-treeD$tip.label<-str_sub(treeD$tip.label,1,2)
-#treeE$tip.label<-str_sub(treeE$tip.label,1,2)
+treeA$tip.label<-paste('PBV',str_sub(treeB$tip.label,1,2))
+treeB$tip.label<-paste('PBV',str_sub(treeB$tip.label,1,2))
+treeC$tip.label<-paste('PBV',str_sub(treeC$tip.label,1,2))
+treeD$tip.label<-paste('PBV',str_sub(treeD$tip.label,1,2))
+#treeE$tip.label<-paste('PBV',str_sub(treeE$tip.label,1,2))
 
 # paco
 mat_co<-diag(x = 1, nrow=length(treeA$tip.label), ncol=length(treeA$tip.label))
