@@ -138,7 +138,7 @@ ggtree(treeE, layout='rectangular') +  geom_treescale(fontsize = 3,offset = 2) +
 library(stringr)
 str_sub(treeA$tip.label,1,2)
 
-treeA$tip.label<-paste('PBV',str_sub(treeB$tip.label,1,2))
+treeA$tip.label<-paste('PBV',str_sub(treeA$tip.label,1,2))
 treeB$tip.label<-paste('PBV',str_sub(treeB$tip.label,1,2))
 treeC$tip.label<-paste('PBV',str_sub(treeC$tip.label,1,2))
 treeD$tip.label<-paste('PBV',str_sub(treeD$tip.label,1,2))
@@ -173,14 +173,42 @@ plot(objDC,cex=0.01)
 
 # plot together
 
+# left<-rep("blue",nrow(objAB$trees[[1]]$edge))
+# nodes<-getDescendants(objAB$trees[[1]],36)
+# left[sapply(nodes,function(x,y) which(y==x),y=objAB$trees[[1]]$edge[,2])]<-
+#   "blue"
+# nodes<-getDescendants(objAB$trees[[1]],43)
+# left[sapply(nodes,function(x,y) which(y==x),y=objAB$trees[[1]]$edge[,2])]<-
+#   "forestgreen"
+# right<-rep("blue",nrow(objAB$trees[[2]]$edge))
+# nodes<-getDescendants(objAB$trees[[2]],36)
+# right[sapply(nodes,function(x,y) which(y==x),y=objAB$trees[[2]]$edge[,2])]<-
+#   "red"
+# nodes<-getDescendants(objAB$trees[[2]],43)
+# right[sapply(nodes,function(x,y) which(y==x),y=objAB$trees[[2]]$edge[,2])]<-
+#   "forestgreen"
+# edge.col<-list(left=left,right=right)
+# edge.col
+
+
 pdf('combined_trees.pdf', height = 12, width = 8)
 par(mfrow=c(2,1))
-plot(objAB,fsize=0.8)
+# plot(objAB,fsize=0.8,edge.col=edge.col)
+plot(objAB,fsize=0.8,link.col=c(rep('blue',5),rep(51,33)))
+legend("topright", c("Picobirnavirus I","Picobirnavirus II"), pch=16, inset = .05, col = c("forestgreen","blue"),
+       bty = "n")
 text(-0.5, 1, "a",
      cex = 1)
-plot(objAC,fsize=0.8)
+tiplabels.cophylo(pch=16,frame="none",col=c(rep('blue',5),rep('forestgreen',33)),cex=1.5)
+tiplabels.cophylo(pch=16,frame="none",col=c(rep('blue',5),rep('forestgreen',33)),cex=1.5, which = 'right')
+plot(objAC,fsize=0.8,link.col=c(rep('blue',5),rep(51,33)))
+legend("topright", c("Picobirnavirus I","Picobirnavirus II"), pch=16, inset = .05, col = c("forestgreen","blue"),
+       bty = "n")
 text(-0.5, 1, "b",
      cex = 1)
+tiplabels.cophylo(pch=16,frame="none",col=c(rep('blue',5),rep('forestgreen',33)),cex=1.5)
+tiplabels.cophylo(pch=16,frame="none",col=c(rep('blue',5),rep('forestgreen',33)),cex=1.5, which = 'right')
+
 #plot(objDC,fsize=0.8)
 dev.off()
 # cophyloplot(treeA, treeB, assoc, show.tip.label=T, use.edge.length=FALSE,
